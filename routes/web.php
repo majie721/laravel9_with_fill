@@ -1,6 +1,7 @@
 <?php
 
-use App\Enums\Common\RouteSymbol;
+use App\Helpers\App;
+use App\Helpers\Router;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,7 +15,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware([])->group(function (){
-    \App\Helpers\App::setRouteSymbol(RouteSymbol::WEB);
+Route::middleware([])->prefix(config('route.web.prefix'))->group(function (){
 
+    $config =  config('route.web',[]);
+    App::setRouteSymbol($config['name']);
+    Route::any('{controller}/{action}', static function ($controller, $action)use ($config){
+        return Router::dispatchRoute($controller,$action,$config);
+    })->where('controller','.*');
 });

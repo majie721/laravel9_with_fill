@@ -50,7 +50,7 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single'],
+            'channels' => ['daily'],
             'ignore_exceptions' => false,
         ],
 
@@ -114,6 +114,17 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+
+
+
+
+        'exception'=>[
+            'driver' => 'stack',
+            'channels' => ['daily'],
+            'path' => storage_path('logs/exception.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'name'=>'exception'
+        ]
     ],
 
 ];

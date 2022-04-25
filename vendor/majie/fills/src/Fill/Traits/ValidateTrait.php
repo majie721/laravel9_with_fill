@@ -2,6 +2,8 @@
 
 namespace Majie\Fills\Fill\Traits;
 
+use Majie\Fills\Fill\Exceptions\ExceptionConstCode;
+use Majie\Fills\Fill\Exceptions\ValidateException;
 use Majie\Fills\Fill\Validate\ValidatorFactory;
 
 trait ValidateTrait
@@ -16,9 +18,12 @@ trait ValidateTrait
         }
         $messages = $this->messages();
         $customAttributes = $this->attributes();
+
         $validator = ValidatorFactory::getValidator($data,$rules,$messages,$customAttributes);
         if($validator->stopOnFirstFailure($stopOnFirstFailure)->fails()){
-            $errors = $validator->errors()->first();
+            $errors = $stopOnFirstFailure ? [$validator->errors()->first()] :$validator->errors()->all();
+            $messages = sprintf("Some parameter verification errors,The error information as below:%s.",json_encode($errors));
+            throw new ValidateException($errors,$messages,ExceptionConstCode::VALIDATE_FAILURE);
         }
 
         return $this;

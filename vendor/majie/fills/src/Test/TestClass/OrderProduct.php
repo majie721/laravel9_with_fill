@@ -8,6 +8,8 @@ use Majie\Fills\Fill\Proxy;
 
 class OrderProduct extends Proxy
 {
+    protected $stopOnFirstFailure = false;
+
     #[Doc('商品id')]
     public int $id;
 
@@ -27,5 +29,29 @@ class OrderProduct extends Proxy
     #[Decorator('strtotime')]
     //#[Decorator('date','H:i:s Y-m-d')]
     public string $created_at;
+
+
+    public function rules()
+    {
+        return [
+            'id'=>"integer|required|min:1|max:100",
+            'sku'=>"string|required|min:1|max:10|starts_with:sku,MJ",
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'id.required' => ':attribute is required',
+            'id.integer' => ':attribute message must be int',
+        ];
+     }
+
+     public function attributes()
+     {
+         return [
+             'id'=>'Product ID'
+         ];
+     }
 
 }

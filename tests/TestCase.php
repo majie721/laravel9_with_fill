@@ -7,6 +7,8 @@ use App\Helpers\App;
 use App\Helpers\Common;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+use Majie\Fills\Test\TestClass\OrderProduct;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -54,6 +56,44 @@ abstract class TestCase extends BaseTestCase
 
        var_dump((float)"-8E+3");
 
+    }
+
+
+    public function testValidate(){
+        $data = [
+            'id'=>'aasd',
+            'sku'=>'appal111111111e'
+        ];
+
+        $product = OrderProduct::fromItem($data);
+
+    }
+
+    public function testValidate2(){
+        $data = [
+            'id'=>'aasd',
+            'sku'=>'appale'
+        ];
+
+        $rule = [
+            'id'=>"integer|required|min:1|max:100",
+            'sku'=>"string|required|min:1|max:10|starts_with:sku,MJ",
+        ];
+
+        $messages =  [
+            'id.required' => ':ttribute is required',
+            'id.integer' => ':attribute message must be int',
+        ];
+
+        $attributes =  [
+            'id'=>'Product ID'
+        ];
+
+        $validater =  Validator::make($data,$rule,$messages,$attributes);
+        if($validater->fails()){
+            var_dump($validater->errors()->all());
+            var_dump($validater->errors()->first());
+        }
 
     }
 }

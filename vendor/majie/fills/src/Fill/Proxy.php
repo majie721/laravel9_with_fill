@@ -28,6 +28,7 @@ class Proxy implements \ArrayAccess
 
 
 
+
     public function __construct(array|object|null $data=null,bool $setOriginal=false)
     {
         $this->setOriginalData($data,$setOriginal)

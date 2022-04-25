@@ -4,6 +4,7 @@ namespace Tests;
 
 use App\Enums\Common\RouteSymbol;
 use App\Helpers\App;
+use App\Helpers\Common;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Log;
 
@@ -30,6 +31,29 @@ abstract class TestCase extends BaseTestCase
         Log::notice("用户在异地登录");
         Log::info("用户xxx登录成功");
         Log::debug("调试信息");
+
+    }
+
+    public function testType(){
+        $f = '1.0';
+        var_dump(is_float($f));
+    }
+
+    public function testIsTrueFloat(){
+
+        var_dump((int)(-1.9));
+        var_dump(Common::isTrueFloat(-12));
+       var_dump(Common::isTrueFloat(0));
+       var_dump(Common::isTrueFloat(12.2));
+       var_dump(Common::isTrueFloat(-12.2));
+       var_dump(Common::isTrueFloat("0"));
+       var_dump(Common::isTrueFloat("0.00"));
+       var_dump(Common::isTrueFloat("0.02"));
+       var_dump(Common::isTrueFloat(1e3));
+       var_dump(Common::isTrueFloat(-8E+3));
+
+       var_dump((float)"-8E+3");
+
 
     }
 }

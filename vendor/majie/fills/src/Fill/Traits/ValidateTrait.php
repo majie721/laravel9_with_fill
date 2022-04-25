@@ -10,10 +10,10 @@ trait ValidateTrait
 {
 
 
-    protected function validateAction(array $data,bool $stopOnFirstFailure)
+    protected function validateAction(mixed $data,bool $stopOnFirstFailure)
     {
         $rules = $this->rules();
-        if (empty($rules)) {
+        if (empty($rules) || is_null($data)) {
             return $this;
         }
         $messages = $this->messages();

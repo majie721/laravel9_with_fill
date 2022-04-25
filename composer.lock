@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "64646289a5a96e949bbe7ac0009e899b",
+    "content-hash": "817aa447003a96c35819d0d0d281f646",
     "packages": [
         {
             "name": "brick/math",
@@ -1604,12 +1604,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/majie721/ArrayFill.git",
-                "reference": "635bac25df811ab383e8d259539d997dfa92e8f0"
+                "reference": "fe36cedf67bd1914dc9359f654d25f5c9f166889"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/majie721/ArrayFill/zipball/635bac25df811ab383e8d259539d997dfa92e8f0",
-                "reference": "635bac25df811ab383e8d259539d997dfa92e8f0",
+                "url": "https://api.github.com/repos/majie721/ArrayFill/zipball/fe36cedf67bd1914dc9359f654d25f5c9f166889",
+                "reference": "fe36cedf67bd1914dc9359f654d25f5c9f166889",
                 "shasum": ""
             },
             "require": {
@@ -1637,7 +1637,7 @@
                 "issues": "https://github.com/majie721/ArrayFill/issues",
                 "source": "https://github.com/majie721/ArrayFill/tree/main"
             },
-            "time": "2022-04-22T10:30:20+00:00"
+            "time": "2022-04-25T13:00:14+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -7781,7 +7781,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.0.2"
+        "php": "^8.1"
     },
     "platform-dev": [],
     "plugin-api-version": "2.2.0"

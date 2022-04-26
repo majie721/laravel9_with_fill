@@ -1,13 +1,24 @@
 <?php
-
 namespace App\Http\Web\Controllers;
 
 use App\Http\Web\Beans\Demo\Demo;
 use http\Client\Curl\User;
+use Majie\Fills\Fill\AttributeClass\ApiDoc;
 
 class IndexController
 {
-    public function user(  $a, \App\Models\User $b, $c,int $d,float $e){
+    /**
+     * @param $a
+     * @param \App\Models\User $b
+     * @param $c
+     * @param int $d
+     * @param float $e
+     * @return void
+     */
+    #[ApiDoc('个人中心','用户信息',Demo::class,2)]
+    public function user(  array $a,  $d=9,float $e){
+        var_dump($a,$d,$e);die();
+
        $a = [
            'id'=>1,
            'code'=>'201222001',
@@ -25,6 +36,7 @@ class IndexController
        echo json_encode($a);die();
     }
 
+    #[ApiDoc('个人中心','用户信息',Demo::class,1)]
     public function demo(Demo $bean){
         var_dump($bean);
     }

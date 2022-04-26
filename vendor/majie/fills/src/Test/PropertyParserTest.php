@@ -5,7 +5,6 @@ namespace Majie\Fills\Test;
 use Majie\Fills\Fill\PropertyParser;
 use Majie\Fills\Test\TestClass\BaseTest;
 use Majie\Fills\Test\TestClass\Order;
-use Majie\Fills\Test\TestClass\OrderProduct;
 use PHPUnit\Framework\TestCase;
 
 Class PropertyParserTest extends BaseTest{
@@ -86,16 +85,6 @@ Class PropertyParserTest extends BaseTest{
         var_dump($orderObj);
 
         //$this->assertTrue(true);
-    }
-
-    public function testValidate(){
-        $data = [
-            'id'=>'aasd',
-            'sku'=>'appale'
-        ];
-
-        $product = OrderProduct::fromItem($data);
-
     }
 
 

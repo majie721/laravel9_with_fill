@@ -13,10 +13,4 @@ class ExceptionConstCode
     public const  DECORATOR_CLASS_NOT_EXISTS = 802;//装饰器class找不到
 
 
-    public const  VALIDATE_FAILURE  = 830;//检验错误
-
-
-
-
-
 }

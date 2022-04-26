@@ -158,10 +158,10 @@ class PropertyParser
             throw new DocumentPropertyError($message,ExceptionConstCode::PROPERTY_TYPE_IS_UNION_TYPE);
         }
 
-//        if($property instanceof \ReflectionIntersectionType){ //php8.1
-//            $message = sprintf("The %s property type of the %s object cannot be intersection type.",$propertyName,$this->proxyObjName);
-//            throw new DocumentPropertyError($message,ExceptionConstCode::PROPERTY_TYPE_IS_INTERSECTION_TYPE);
-//        }
+        if($property instanceof \ReflectionIntersectionType){ //php8.1
+            $message = sprintf("The %s property type of the %s object cannot be intersection type.",$propertyName,$this->proxyObjName);
+            throw new DocumentPropertyError($message,ExceptionConstCode::PROPERTY_TYPE_IS_INTERSECTION_TYPE);
+        }
 
         $message = sprintf("The %s property type of the object[ %s ] cannot be unknown type.",$propertyName,$this->proxyObjName);
         throw new DocumentPropertyError($message,ExceptionConstCode::PROPERTY_TYPE_IS_UNKNOWN_TYPE);

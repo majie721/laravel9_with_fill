@@ -33,6 +33,9 @@ class PropertyInfo
     /** @var array 枚举值 */
     public array $enumInfo = [];
 
+    /** @var int 元素层级深度 */
+    public int $depth;
+
     /** @var array 装饰器函数 */
     #[ArrayShape([[
         'callback'=>'mixed',

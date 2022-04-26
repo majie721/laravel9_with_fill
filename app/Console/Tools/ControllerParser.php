@@ -116,6 +116,9 @@ class ControllerParser
 
 
     private function parseParam(\ReflectionParameter $parameter){
+         $parameterParser =  new ParameterParser($parameter);
+         $parameterParser->parser(1);
+
 
     }
 

@@ -1,0 +1,60 @@
+<?php
+
+namespace App\Console\Commands;
+
+use App\Console\Tools\ControllerParser;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
+
+class GenerateDocument extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'generate:document {name}';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = '生成web api文档';
+
+    /**
+     * Execute the console command.
+     *
+     * @return int
+     */
+    public function handle()
+    {
+
+        $module = config('command.generateDocument',[]);
+        if(empty($module)){
+            return $this->error('模块配置[command.generateDocument.module]为空');
+        }
+
+        $choice = array_keys($module);
+
+        $name = $this->choice(
+            '选择待生成文档的模块',
+            $choice,
+            $choice[0]
+        );
+
+        $docDir =  $module[$name]['path']??'';
+
+        if(!is_dir($docDir)){
+            return $this->error("配置错误:{$docDir}目录不存在");
+        }
+
+        $fileData = File::allFiles($docDir);
+        foreach ($fileData as $fileInfo){
+           $parser = new ControllerParser($fileInfo->getRealPath(),$module[$name]['separator']??"/");
+           $parser->init()->parser();
+        }
+
+
+    }
+}

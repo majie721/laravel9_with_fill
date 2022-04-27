@@ -81,6 +81,15 @@ class ControllerParser
             $methodName = $method->getName();
             $attributeData = $apiDocAttribute[0]->newInstance();
             $params = $method->getParameters();
+
+
+            $info =  $this->checkParam($params,$methodName);
+            $uri = "{$uriPath}/$methodName";
+            if(!empty($info['queryParams'])){
+                $queryStr = http_build_query($info['queryParams']);
+                $uri .="?$queryStr";
+            }
+
             $paramData = [];
             foreach ($params as $param) {
                 try {
@@ -99,7 +108,7 @@ class ControllerParser
             $document->method       = $attributeData->method;
             $document->sort         = $attributeData->sort;
             $document->desc         = $attributeData->desc;
-            $document->uri          = "{$uriPath}/$methodName";
+            $document->uri          = $uri;
             $document->requestParam = $paramData;
             $this->documents[] = $document;
         }
@@ -139,6 +148,49 @@ class ControllerParser
     {
         $parameterParser = new ParameterParser($parameter);
         return $parameterParser->parse($parameter, 1);
+    }
+
+
+    /**
+     * 这里校验路由规则:
+     * 1.标量类型视为查询参数 例如:/api/users?name=wwx
+     * 2.查询参数暂时不支持数组类型(复杂类型的放入请求的body中)
+     * 3.请求body是对象才会被文档解析,纯数组不解析成文档
+     * 4.因为body是对象或者数组,控制器的复合类型只会有一个
+     * @param \ReflectionParameter[] $refParameters
+     * @param string $methodName
+     * @return void
+     * @throws \Exception
+     */
+    private function checkParam(array $refParameters,string $methodName){
+        $paramsInfo = [
+            'queryParams'=>[],
+            'bodyParams'=>[],
+        ];
+
+        foreach ($refParameters as $parameter){
+            $parameterName = $parameter->getName();
+            $reflectionType = $parameter->getType();
+            if (null === $reflectionType) {
+                throw new \Exception("参数[{$parameterName}]的类型不能为空");
+            }
+
+            if($reflectionType instanceof \ReflectionNamedType){
+                $type=  $reflectionType->getName();
+                if(\Func::isScalar($type)){
+                    $paramsInfo['queryParams'][] = [$parameterName=>$type];
+                }else{
+                    $paramsInfo['bodyParams'][] = $parameterName;
+                }
+            }else{
+                throw new \Exception("Controller{$this->className}下的{$methodName}方法参数[{$parameterName}]的类型异常,定义类型必须是ReflectionNamedType");
+            }
+        }
+
+        if(count($paramsInfo['bodyParams'])>1){
+            throw new \Exception("Controller{$this->className}下的{$methodName}方法中最多只能有一个对象或数组");
+        }
+        return; $paramsInfo;
     }
 
 

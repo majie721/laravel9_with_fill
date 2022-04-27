@@ -110,6 +110,7 @@ class PropertyParser
                     $propertyInfo->arrayType = $attributeParser->getArrayType();
                     $propertyInfo->isBuiltin = $reflectionType->isBuiltin() && in_array($propertyInfo->arrayType,['','int','string','float','bool','int[]','string[]','float[]','bool[]'],true);
                     $parseDoc && $propertyInfo->doc = $attributeParser->getDoc();
+                    $parseDoc && $propertyInfo->option = $attributeParser->getDocOption();
                     $enumDoc  && $propertyInfo->enumInfo = $attributeParser->enumInfo();
                     $propertyInfo->decorators = $attributeParser->getDecorators();
                     self::$proxyPropertyPoll[$className][$propertyName] = $propertyInfo;

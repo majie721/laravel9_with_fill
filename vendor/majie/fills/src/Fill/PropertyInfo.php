@@ -31,6 +31,9 @@ class PropertyInfo
     /** @var string 文档注释 */
     public string $doc = '';
 
+    /** @var bool api中参数是否可选 */
+    public bool $option = false;
+
     /** @var array 枚举值 */
     #[ArrayShape(ArrayShapeConst::enumInfoArrayShape)]
     public array $enumInfo = [];

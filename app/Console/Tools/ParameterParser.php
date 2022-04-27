@@ -43,8 +43,11 @@ class ParameterParser
     /** @var int 元素层级深度 */
     public int $depth;
 
-    /** @var bool 是否必填 */
+    /** @var bool 是否必填(默认所有参数必填,有option标记,默认值可为空的除外) */
     public bool $isRequired = true;
+
+    /** @var bool 是否为查询参数 */
+    public bool $isQueryParam = false;
 
 
     public function __construct()
@@ -85,8 +88,8 @@ class ParameterParser
 
         if ($reflectionType instanceof \ReflectionNamedType) {
             $type = $reflectionType->getName();
-            if ($this->isScalar($type)) {
-                return $this->setParseTypeData($type, [], true,$parameter);
+            if (\Func::isScalar($type)) {
+                return $this->setParseTypeData($type, [], true,$parameter,true);
             } elseif ('array' === $type) {//数组可以根据ArrayShape注解解析
                 $attributes = $parameter->getAttributes(ArrayShape::class);
                 if (empty($attributes)) {
@@ -94,7 +97,7 @@ class ParameterParser
                 }
 
                 $typeInArrayShape = $attributes[0]->getName();
-                if ($this->isScalar($typeInArrayShape)) {
+                if (\Func::isScalar($typeInArrayShape)) {
                     $type = "{$typeInArrayShape}[]";
                     return $this->setParseTypeData($type, [], true,$parameter);
                 }
@@ -119,32 +122,31 @@ class ParameterParser
      * @param string $type
      * @param array $child
      * @param bool $isBuiltin
+     * @param \ReflectionParameter $parameter
+     * @param bool $isQueryPara
      * @return $this
+     * @throws \JsonException
+     * @throws \ReflectionException
      */
-    private function setParseTypeData(string $type, array $child, bool $isBuiltin,\ReflectionParameter $parameter)
+    private function setParseTypeData(string $type, array $child, bool $isBuiltin,\ReflectionParameter $parameter,bool $isQueryPara=false)
     {
+        $docData =  isset($parameter->getAttributes(Doc::class)[0])? $parameter->getAttributes(Doc::class)[0]->newInstance():null;
         $this->child = $child;
         $this->isBuiltin = $isBuiltin;
         $this->type = $type;
         $this->hasDefaultValue = $parameter->isOptional();
         $this->defaultValue = $this->hasDefaultValue? $parameter->getDefaultValue():null;
-        $this->document = isset($parameter->getAttributes(Doc::class)[0])? $parameter->getAttributes(Doc::class)[0]->newInstance()->getDoc():'';
+        $this->document = $docData?->getDoc();
         $this->isEnum =   !empty($parameter->getAttributes(Enum::class));
         $this->enumData = $this->isEnum? json_encode($parameter->getAttributes(Enum::class)[0]->newInstance()->getEnumInfo(), JSON_THROW_ON_ERROR) :'';
+        $this->isQueryParam = $isQueryPara;
+        $this->isRequired = !($this->hasDefaultValue || $parameter->allowsNull() || $docData?->getOption());
         $this->child = [];
         return $this;
     }
 
 
-    /**
-     * 是否标量
-     * @param string $type
-     * @return bool
-     */
-    private function isScalar(string $type): bool
-    {
-        return in_array($type, ['int', 'bool', 'string', 'float'], true);
-    }
+
 
     /**
      * @param string $className
@@ -176,7 +178,7 @@ class ParameterParser
                     throw new \Exception("{$className}的{$key}属性未定义");
                 }
 
-                if($this->isScalar($datum->typeName)){
+                if(\Func::isScalar($datum->typeName)){
                     $properties[] = $this->newScalar($datum,$depth);
                     continue;
                 }
@@ -283,6 +285,7 @@ class ParameterParser
         $instance->enumData = $instance->isEnum? json_encode($info->enumInfo, JSON_THROW_ON_ERROR) :'';
         $instance->child = [];
         $instance->depth = $depth;
+        $instance->isRequired = !($instance->hasDefaultValue || $info->allowsNull || $info->option);
         return $instance;
     }
 

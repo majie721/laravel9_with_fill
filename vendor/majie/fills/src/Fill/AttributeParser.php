@@ -75,6 +75,18 @@ class AttributeParser
     }
 
     /**
+     * 解析文档注释注解(是否可选)
+     * @return mixed|string|void
+     */
+    public function getDocOption(){
+        $data =  $this->attributesData[Doc::class]??'';
+        if($data){
+            return  $data['attribute'][0]->newInstance()->getOption();
+        }
+        return '';
+    }
+
+    /**
      *
      * @return array
      */
@@ -103,7 +115,7 @@ class AttributeParser
         }
 
         return $data['attribute'][0]->newInstance()->getEnumInfo();
-        
+
     }
 
 

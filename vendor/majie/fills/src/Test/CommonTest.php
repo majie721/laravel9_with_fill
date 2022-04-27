@@ -33,4 +33,9 @@ Class CommonTest extends BaseTest {
     public function testCallable(){
         is_callable();
     }
+
+    public function testNullCall(){
+        $docData = null;
+        var_dump($docData->getDoc());
+    }
 }

@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Console\Tools\ControllerDoc;
 use App\Console\Tools\ControllerParser;
+use App\Console\Tools\MarkdownGenerator;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
@@ -37,11 +39,13 @@ class GenerateDocument extends Command
 
         $choice = array_keys($module);
 
-        $name = $this->choice(
-            '选择待生成文档的模块',
-            $choice,
-            $choice[0]
-        );
+//        $name = $this->choice(
+//            '选择待生成文档的模块',
+//            $choice,
+//            $choice[0]
+//        );
+
+        $name = $choice[0];//todo
 
         $docDir =  $module[$name]['path']??'';
 
@@ -50,11 +54,52 @@ class GenerateDocument extends Command
         }
 
         $fileData = File::allFiles($docDir);
+        $documents = [];
         foreach ($fileData as $fileInfo){
            $parser = new ControllerParser($fileInfo->getRealPath(),$module[$name]['separator']??"/");
-           $parser->init()->parser();
+           $document =  $parser->init()->parser();
+           $document &&  $documents = [...$documents,...$document];
         }
 
+        $documents = $this->documentsSort($documents);
+        $generator = new MarkdownGenerator($documents,"{$name} Api Document");
+        $generator->generate()->store(public_path('apidoc')."\\{$name}",true);
+
+    }
+
+
+    /**
+     * 分组后排序
+     * @param array $documents ControllerDoc[]
+     * @return array array<key=>ControllerDoc[]>
+     */
+    private function documentsSort(array $documents):array{
+        $groupDocuments = [];
+        foreach ($documents as  $document){
+            $groupDocuments[$document->module][] = $document;
+        }
+
+
+        foreach ($groupDocuments as &$documentArr){
+            $documentArr = $this->multiSort($documentArr,'sort');
+        }
+        return $groupDocuments;
+    }
+
+
+    /**
+     * 多维数组排序:
+     * eg. multiSort($data, 'volume', SORT_DESC, 'edition', SORT_ASC);
+     *
+     * @param $data
+     * @param $key
+     * @return array
+     */
+    private function multiSort($data,$key): array
+    {
+
+        array_multisort(array_column($data, $key), SORT_DESC, $data);
+        return  $data;
 
     }
 }

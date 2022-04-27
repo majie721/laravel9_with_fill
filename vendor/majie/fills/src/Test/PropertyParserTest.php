@@ -38,6 +38,9 @@ Class PropertyParserTest extends BaseTest{
         print_r(Order::getProperties());
         $this->assertTrue(true);
     }
+    public function testParseProxyPropertyData(){
+        (new PropertyParser(null))->parseProxyPropertyData(Order::class,true,true);
+    }
 
 
     public function testFillOrder(){

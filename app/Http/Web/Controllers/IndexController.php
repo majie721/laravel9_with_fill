@@ -15,8 +15,8 @@ class IndexController
      * @param float $e
      * @return void
      */
-    #[ApiDoc('个人中心','用户信息',Demo::class,2)]
-    public function user(  array $a,  $d=9,float $e){
+    #[ApiDoc('个人中心2','用户信息',Demo::class,'','PUT',2)]
+    public function user(  array $a, int $d=9,float $e){
         var_dump($a,$d,$e);die();
 
        $a = [
@@ -36,8 +36,14 @@ class IndexController
        echo json_encode($a);die();
     }
 
-    #[ApiDoc('个人中心','用户信息',Demo::class,1)]
+    #[ApiDoc('个人中心2','用户信息',Demo::class,'','GET',1)]
     public function demo(Demo $bean){
+        var_dump($bean);
+    }
+
+
+    #[ApiDoc('个人中心2','用户信息2',Demo::class,'','GET',3)]
+    public function demo2(Demo $bean){
         var_dump($bean);
     }
 }

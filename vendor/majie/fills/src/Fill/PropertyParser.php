@@ -112,7 +112,6 @@ class PropertyParser
                     $parseDoc && $propertyInfo->doc = $attributeParser->getDoc();
                     $enumDoc  && $propertyInfo->enumInfo = $attributeParser->enumInfo();
                     $propertyInfo->decorators = $attributeParser->getDecorators();
-
                     self::$proxyPropertyPoll[$className][$propertyName] = $propertyInfo;
                 }
             }
@@ -128,8 +127,8 @@ class PropertyParser
      * @throws DocumentPropertyError|\ReflectionException
      */
     #[ArrayShape(['Key'=>PropertyInfo::class])]
-    public function getProxyPropertyData(string $className):array{
-        $this->parseProxyPropertyData($className);
+    public function getProxyPropertyData(string $className,bool $parseDoc=false,bool $enumDoc=true):array{
+        $this->parseProxyPropertyData($className,$parseDoc,$enumDoc);
         return self::$proxyPropertyPoll[$className]??[];
     }
 

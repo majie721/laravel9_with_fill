@@ -3,6 +3,7 @@
 namespace Majie\Fills\Fill;
 
 use JetBrains\PhpStorm\ArrayShape;
+use Majie\Fills\Fill\AttributeClass\ArrayShapeConst;
 
 class PropertyInfo
 {
@@ -15,7 +16,7 @@ class PropertyInfo
     /** @var mixed 默认值 */
     public mixed $defaultValue;
 
-    /** @var string 属性类型 */
+    /** @var string 属性类型 array,string,foalt,bool,类名 */
     public string $typeName;
 
     /** @var bool 是否可空 */
@@ -31,10 +32,11 @@ class PropertyInfo
     public string $doc = '';
 
     /** @var array 枚举值 */
+    #[ArrayShape(ArrayShapeConst::enumInfoArrayShape)]
     public array $enumInfo = [];
 
-    /** @var int 元素层级深度 */
-    public int $depth;
+//    /** @var int 元素层级深度 */
+//    public int $depth;
 
     /** @var array 装饰器函数 */
     #[ArrayShape([[

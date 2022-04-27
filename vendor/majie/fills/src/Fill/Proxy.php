@@ -130,11 +130,11 @@ class Proxy implements \ArrayAccess
      * @throws Exceptions\DocumentPropertyError
      */
     #[ArrayShape(['Key'=>PropertyInfo::class])]
-    public static function getPropertiesInfo(): array
+    public static function getPropertiesInfo(bool $parseDoc=false,bool $enumDoc=true): array
     {
 
         $parser =  new PropertyParser(null);
-        return $parser->getProxyPropertyData(static::class);
+        return $parser->getProxyPropertyData(static::class,$parseDoc,$enumDoc);
     }
 
     /**

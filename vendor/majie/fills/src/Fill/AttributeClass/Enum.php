@@ -14,4 +14,15 @@ class Enum
     {
 
     }
+
+
+    public function getEnumInfo(){
+        if(is_callable([$this->enumClass,'labelData'])){
+            $labelData = call_user_func([$this->enumClass,'labelData']);
+        }
+        return [
+            'name'=>$this->enumClass,
+            'labelData'=>$labelData??[]
+        ];
+    }
 }

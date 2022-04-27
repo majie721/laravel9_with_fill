@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\Console\Commands\GenerateDocument;
 use App\Enums\Common\RouteSymbol;
 use App\Helpers\App;
 use App\Helpers\Common;
@@ -95,5 +96,27 @@ abstract class TestCase extends BaseTestCase
             var_dump($validater->errors()->first());
         }
 
+    }
+
+
+
+    public function testsort(){
+//        $data[] = array('volume' => 67, 'edition' => 2);
+//        $data[] = array('volume' => 86, 'edition' => 1);
+//        $data[] = array('volume' => 85, 'edition' => 6);
+//        $data[] = array('volume' => 98, 'edition' => 2);
+//        $data[] = array('volume' => 86, 'edition' => 6);
+//        $data[] = array('volume' => 67, 'edition' => 7);
+//
+//        $res =  array_multisort (array_column($data, 'volume'), SORT_DESC, $data);
+//        var_dump($res,$data);
+
+
+        var_dump();
+    }
+
+    public function testparser(){
+        $hander = new GenerateDocument();
+        $hander->handle();
     }
 }

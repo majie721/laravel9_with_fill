@@ -69,9 +69,9 @@ class AttributeParser
     public function getDoc(){
         $data =  $this->attributesData[Doc::class]??'';
         if($data){
-            $arguments = $data['attribute'][0]->getArguments();
-            return $arguments[0]; //todo 待优化
+            return  $data['attribute'][0]->newInstance()->getDoc();
         }
+        return '';
     }
 
     /**
@@ -102,14 +102,8 @@ class AttributeParser
             return [];
         }
 
-        $instance = $data['attribute'][0]->getArguments();
-        if(is_callable([$instance[0],'labelData'])){
-            $labelData = call_user_func([$instance[0],'labelData']);
-        }
-        return [
-            'name'=>$instance[0],
-            'labelData'=>$labelData??[]
-        ];
+        return $data['attribute'][0]->newInstance()->getEnumInfo();
+        
     }
 
 

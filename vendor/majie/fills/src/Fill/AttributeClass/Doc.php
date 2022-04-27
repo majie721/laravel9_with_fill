@@ -14,4 +14,9 @@ class Doc
     {
 
     }
+
+
+    public function getDoc(){
+        return $this->doc;
+    }
 }

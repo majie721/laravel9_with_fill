@@ -28,7 +28,7 @@ class Doc
 
     public function getDoc()
     {
-        return $this->doc;
+        return $this->doc??'';
     }
 
     public function getOption()

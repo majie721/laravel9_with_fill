@@ -4,9 +4,15 @@ namespace App\Http\Web\Controllers;
 use App\Http\Web\Beans\Demo\Demo;
 use http\Client\Curl\User;
 use Majie\Fills\Fill\AttributeClass\ApiDoc;
+use Majie\Fills\Fill\AttributeClass\Doc;
 
 class IndexController
 {
+    #[ApiDoc('个人中心2','用户信息2',Demo::class,'','GET',3)]
+    public function demo2(Demo $bean, #[Doc('ID')] int $ids=222){
+        var_dump($bean);
+    }
+
     /**
      * @param $a
      * @param \App\Models\User $b
@@ -16,7 +22,7 @@ class IndexController
      * @return void
      */
     #[ApiDoc('个人中心2','用户信息',Demo::class,'','PUT',2)]
-    public function user(  array $a, int $d=9,float $e){
+    public function user(  bool $a, int $d=9,float $e){
         var_dump($a,$d,$e);die();
 
        $a = [
@@ -42,8 +48,5 @@ class IndexController
     }
 
 
-    #[ApiDoc('个人中心2','用户信息2',Demo::class,'','GET',3)]
-    public function demo2(Demo $bean){
-        var_dump($bean);
-    }
+
 }

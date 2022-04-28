@@ -15,7 +15,7 @@ class Demo extends Proxy
     #[Doc('订单ID')]
     public int $id;
 
-    #[Doc('订单号')]
+    #[Doc('订单号',true)]
     public int $code;
 
     #[Doc('订单创建时间')]

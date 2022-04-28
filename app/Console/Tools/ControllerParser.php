@@ -7,6 +7,7 @@ use App\Helpers\Str;
 use Illuminate\Support\Facades\File;
 use Majie\Fills\Fill\AttributeClass\ApiDoc;
 use Majie\Fills\Fill\AttributeClass\Doc;
+use Majie\Fills\Fill\Library\Functions\Func;
 
 
 class ControllerParser
@@ -81,30 +82,17 @@ class ControllerParser
             $methodName = $method->getName();
             $attributeData = $apiDocAttribute[0]->newInstance();
             $params = $method->getParameters();
-
-
-            $info =  $this->checkParam($params,$methodName);
             $uri = "{$uriPath}/$methodName";
-            if(!empty($info['queryParams'])){
-                $queryStr = http_build_query($info['queryParams']);
-                $uri .="?$queryStr";
-            }
+            $paramData =  $this->processParams($params,$methodName,$uri);
 
-            $paramData = [];
-            foreach ($params as $param) {
-                try {
-                    $paramData[] = $this->parseParam($param);
-                } catch (\Throwable $e) {
-                    throw new \Exception("Controller{$this->className}下的{$methodName}方法解析失败:{$e->getMessage()}");
-                }
-            }
+            $response  = $this->processResponse($attributeData->response,$methodName);
 
             $methodName = Str::uncamelize($methodName);
             $document = new ControllerDoc();
             $document->name         = $methodName;
             $document->module       = $attributeData->module;
             $document->title        = $attributeData->name;
-            $document->response     = $attributeData->response;
+            $document->response     = $response;
             $document->method       = $attributeData->method;
             $document->sort         = $attributeData->sort;
             $document->desc         = $attributeData->desc;
@@ -147,7 +135,7 @@ class ControllerParser
     private function parseParam(\ReflectionParameter $parameter)
     {
         $parameterParser = new ParameterParser($parameter);
-        return $parameterParser->parse($parameter, 1);
+        return $parameterParser->parse($parameter);
     }
 
 
@@ -159,10 +147,10 @@ class ControllerParser
      * 4.因为body是对象或者数组,控制器的复合类型只会有一个
      * @param \ReflectionParameter[] $refParameters
      * @param string $methodName
-     * @return void
+     * @return array
      * @throws \Exception
      */
-    private function checkParam(array $refParameters,string $methodName){
+    private function checkParam(array $refParameters,string $methodName):array{
         $paramsInfo = [
             'queryParams'=>[],
             'bodyParams'=>[],
@@ -177,8 +165,8 @@ class ControllerParser
 
             if($reflectionType instanceof \ReflectionNamedType){
                 $type=  $reflectionType->getName();
-                if(\Func::isScalar($type)){
-                    $paramsInfo['queryParams'][] = [$parameterName=>$type];
+                if(Func::isScalar($type)){
+                    $paramsInfo['queryParams'][$parameterName] = $type;
                 }else{
                     $paramsInfo['bodyParams'][] = $parameterName;
                 }
@@ -190,7 +178,64 @@ class ControllerParser
         if(count($paramsInfo['bodyParams'])>1){
             throw new \Exception("Controller{$this->className}下的{$methodName}方法中最多只能有一个对象或数组");
         }
-        return; $paramsInfo;
+        return $paramsInfo;
+    }
+
+
+    /**
+     * 参数处理
+     * @param \ReflectionParameter[] $params
+     * @param string $methodName
+     * @param $uri
+     * @return void
+     * @throws \Exception
+     */
+    private function processParams(array $params,string $methodName,&$uri){
+        $info =  $this->checkParam($params,$methodName);
+
+        if(!empty($info['queryParams'])){
+            $queryStr = urldecode(http_build_query($info['queryParams']));
+            $uri .="?$queryStr";
+        }
+
+        $paramData = [];
+        foreach ($params as $param) {
+            try {
+                $paramData[] = $this->parseParam($param);
+            } catch (\Throwable $e) {
+                throw new \Exception("Controller{$this->className}下的{$methodName}方法解析失败:{$e->getMessage()}");
+            }
+        }
+        return $paramData;
+    }
+
+
+    /**
+     * @param string|null $responseAttribute
+     * @param string $methodName
+     * @return ResponseParser|null
+     * @throws \Exception
+     */
+    private function processResponse(string|null $responseAttribute,string $methodName){
+        try {
+            $responseData = $this->parseResponse($responseAttribute);
+        } catch (\Throwable $e) {
+            throw new \Exception("Controller{$this->className}::{$methodName}下的{$responseAttribute}响应文档解析失败:{$e->getMessage()}");
+        }
+
+        return $responseData;
+    }
+
+    /**
+     * @param string|null $responseAttribute
+     * @return ResponseParser|null
+     * @throws \JsonException
+     * @throws \Majie\Fills\Fill\Exceptions\DocumentPropertyError
+     * @throws \ReflectionException
+     */
+    private function parseResponse(string|null $responseAttribute){
+        $responseParser =  new ResponseParser();
+        return $responseParser->parse($responseAttribute);
     }
 
 

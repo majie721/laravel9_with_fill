@@ -15,8 +15,8 @@ class ControllerDoc
     /** @var string ApiDoc的接口名称 */
     public string $title;
 
-    /** @var string response的文档 */
-    public string $response;
+    /** @var ResponseParser|null response的文档 */
+    public ResponseParser|null $response;
 
     /** @var string  ApiDoc的请求方式 */
     public string $method;

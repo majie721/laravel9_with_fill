@@ -3,6 +3,8 @@
 namespace App\Console\Tools;
 
 
+use App\Helpers\Str;
+
 class MarkdownGenerator
 {
 
@@ -161,18 +163,92 @@ class MarkdownGenerator
      * 请求body ts 的结构定义
      * @param ParameterParser $param
      * @return void
+     *
+     *
      */
     private function getTsTypeDefine(ParameterParser $param){
-         $items = [];
-
-
-    }
-
-    private function getTsType(ParameterParser $param){
-        $lines = [];
-        if($param->className){
-            $lines[] = $param->className.':';
+        $interfaceList = [];
+        if(!$param->className){
+            return '';
         }
+        $namespace = $param->className;
+        $interfaceName = self::toTsInterfaceName($param->className);
+        if($param->child){
+            $items = [];
+            foreach ($param->child as $item){
+               $items[] =  $this->getTsType($item);
+            }
+
+            $content = implode(PHP_EOL,$items);
+
+        }
+
+
+
     }
+
+    private function getTsType(ParameterParser $param){ //todo ts undefind 和 null
+        if($param->className){
+            if($param->type === 'object'){
+                $this->getTsTypeDefine($param);
+
+                $doc = "/** {$param->document}  */" ;
+                $name = Str::uncamelize($param->name);
+                $type = self::toTsInterfaceName($param->className);
+
+                $content =  $doc.PHP_EOL;
+                $content .= " {$name}: {$type}";
+                return $content;
+            }
+
+            if($param->type ==='object[]'){
+                $this->getTsTypeDefine($param);
+                $doc = "/** {$param->document}  */" ;
+                $name = Str::uncamelize($param->name);
+                $type = self::toTsInterfaceName($param->className).'[]';
+                $content =  $doc.PHP_EOL;
+                $content .= " {$name}: {$type}";
+                return $content;
+            }
+        }
+
+        if($param->isBuiltin){
+            $enumStr = $param->isEnum ? "。枚举【".$param->getEnumDesc()."】":'';
+            $doc = $param->document.$enumStr;
+            $name = Str::uncamelize($param->name);
+            $type = self::transformTsType($param->type);
+            $content =  $doc.PHP_EOL;
+            $content .= " {$name}: {$type}";
+            return $content;
+        }
+
+    }
+
+    /**
+     * @param string $parameterParserType
+     * @return string
+     */
+    private static function transformTsType(string $parameterParserType):string{
+        return match ($parameterParserType){
+            'string'=>'string',
+            'float','int'=>'number',
+            'bool'=>'boolean',
+            'int[]','float[]'=>"number[]",
+            'bool[]'=>"bool[]",
+            'string[]'=>"string[]",
+            '[]'=>'[],'
+        };
+    }
+
+    /**
+     * php的类名作为Ts的类名(App\Http\Web\Beans\Demo\Demo获取Demo)
+     * @param string $phpClassName
+     * @return string|null
+     */
+    private static function toTsInterfaceName(string $phpClassName){
+        $arr=  explode("\\",$phpClassName);
+       return  array_pop($arr);
+    }
+
 
 }

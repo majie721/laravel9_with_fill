@@ -17,7 +17,7 @@ class ParameterParser
     /** @var string 参数名称(前端蛇形,php小驼峰) */
     public string $name;
 
-    /** @var string 类型 */
+    /** @var string 类型(int,string,bool,float,object,int[],string[],bool[],float[],object[]) */
     public string $type;
 
     /** @var bool 是否标量类型: int,string,bool,float,int[],string[],bool[],float[] */
@@ -305,5 +305,21 @@ class ParameterParser
         $this->className = $className;
         return $this;
     }
+
+
+    public function getEnumDesc():string{
+        if(!$this->isEnum){
+           return '';
+        }
+
+        $info = json_decode($this->enumData,true);
+        $arr = [];
+        foreach ($info['labelData'] as $datum){
+            $arr .=$datum['label'].":".$datum['value'];
+        }
+       return json_encode($arr,',');
+    }
+
+
 
 }

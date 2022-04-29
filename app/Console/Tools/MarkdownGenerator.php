@@ -4,10 +4,15 @@ namespace App\Console\Tools;
 
 
 use App\Helpers\Str;
+use GuzzleHttp\Handler\Proxy;
+use Majie\Fills\Fill\Library\Functions\Func;
+use Majie\Fills\Fill\PropertyInfo;
+use Majie\Fills\Test\TestClass\Order;
 
-class MarkdownGenerator
+class MarkdownGenerator implements GeneratorInterface
 {
 
+    private string $content;
 
     /**
      * @param  array<key=>ControllerDoc[]> $docs
@@ -15,6 +20,14 @@ class MarkdownGenerator
      */
     public function __construct(protected array $docs,protected string $title){
 
+    }
+
+    /**
+     * @return string
+     */
+    public function getContent(): string
+    {
+        return $this->content;
     }
 
     private function getMdHeader(){
@@ -26,7 +39,7 @@ class MarkdownGenerator
     }
 
 
-    public function generate(){
+    public function generate():FileStore{
         $lines  = $this->getMdHeader();
 
         $subjectIndex = 0;
@@ -61,28 +74,38 @@ class MarkdownGenerator
                 $paramLines =  $this->getResponseBodyLine([$doc->response]);
                 $lines = [...$lines,...$paramLines];
 
-                $bodyParam = array_filter($doc->requestParam,function ($val){
-                    return !$val->isQueryParam;
-                });
+                $bodyParam = $doc->requestBody();
                 $lines[] = "#### {$apiIndex}.4 TypeScript 请求结构";
-                $lines[] = "```json";
-                $lines[] = empty($bodyParam)?'{}':$this->getTsTypeDefine($bodyParam[0]);
+                $lines[] = "```";
+                $lines[] = empty($bodyParam)?'{}':$this->getTsTypeDefine($bodyParam);
                 $lines[] = "```";
 
 
                 $lines[] = "#### {$apiIndex}.5 TypeScript 响应结构";
-                $lines[] = "```json";
+                $lines[] = "```";
                 $lines[] = empty($doc->response)?'{}':$this->getTsTypeDefine($doc->response);
                 $lines[] = "```";
 
 
+                $lines[] = "#### {$apiIndex}.6 TypeScript 请求示例";
+                $lines[] = "```json";
+                $lines[] = empty($bodyParam)?'{}':$this->getRequestJson($bodyParam);
+                $lines[] = "```";
+
+                $lines[] = "#### {$apiIndex}.7 TypeScript 响应示例";
+                $lines[] = "```json";
+                $lines[] = empty($doc->response)?'{}':$this->getResponseJson($doc->response);
+                $lines[] = "```";
             }
 
         }
 
         $content = implode(PHP_EOL, $lines);
+        $this->content = $content;
         return new FileStore($content, 'md');
     }
+
+
 
 
     /**
@@ -188,7 +211,7 @@ class MarkdownGenerator
             }
         }
 
-        return  implode(PHP_EOL.PHP_EOL,$items);
+        return  implode(PHP_EOL,$items);
     }
 
     private function getTsType(ParameterParser|ResponseParser $param):string{ //todo ts undefind 和 null
@@ -259,5 +282,61 @@ class MarkdownGenerator
         $arr=  explode("\\",$phpClassName);
        return  array_pop($arr);
     }
+
+    private function getRequestJson(ParameterParser $parser){
+        $mock = [];
+        $this->getJson($parser->className,$mock);
+        return json_encode($mock,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
+    }
+
+    private function getJson(string $className,array &$mock){
+        if($className){
+            if(is_callable([$className,'getPropertiesInfo'])){
+                $properties =  call_user_func([$className,'getPropertiesInfo']);
+                /**
+                 * @var  $key
+                 * @var  $info PropertyInfo
+                 */
+                foreach ($properties as $keyName=>$info){
+                    if(Func::isScalar($info->typeName)){
+                        $mock[$keyName] = $info->doc?:'';
+                    }
+                    if('array'===$info->typeName){
+                        if(Func::isScalar($info->arrayType)){
+                            $mock[$keyName] = $info->doc?[$info->doc]:[];
+                        }else{
+                            $mock[$keyName] = [];
+                            $mock[$keyName] = [$this->getJson($info->arrayType,$mock[$keyName])];
+                        }
+
+                    }
+                    if(Func::isClass($info->typeName)){
+                        $mock[$keyName] = [];
+                        $mock[$keyName] = $this->getJson($info->className,$mock[$keyName]);
+                    }
+                }
+                return $mock;
+            }
+            return [];
+        }
+    }
+
+    private function getResponseJson(ResponseParser $parser){
+        $mock = [];
+        $this->getJson($parser->className,$mock);
+
+        $response = [
+            'code'=>0,
+            'message'=>'message',
+            'debug'=>[],
+            'data'=>$mock,
+            'timestamp'=>'timestamp',
+        ];
+        return json_encode($response,JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
+    }
+
+
+
+
 
 }

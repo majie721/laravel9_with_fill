@@ -38,6 +38,9 @@ class PropertyInfo
     #[ArrayShape(ArrayShapeConst::enumInfoArrayShape)]
     public array $enumInfo = [];
 
+    /** @var string 类名 */
+    public string $className = '';
+
 //    /** @var int 元素层级深度 */
 //    public int $depth;
 

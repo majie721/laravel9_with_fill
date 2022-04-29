@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Console\Tools\ControllerDoc;
 use App\Console\Tools\ControllerParser;
+use App\Console\Tools\HtmlGenerator;
 use App\Console\Tools\MarkdownGenerator;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -64,6 +65,9 @@ class GenerateDocument extends Command
         $documents = $this->documentsSort($documents);
         $generator = new MarkdownGenerator($documents,"{$name} Api Document");
         $generator->generate()->store(public_path('apidoc')."\\{$name}",true);
+
+        $htmlGenerator = new HtmlGenerator($generator->getContent());
+        $htmlGenerator->generate()->store(public_path('apidoc')."\\{$name}",true);
 
     }
 

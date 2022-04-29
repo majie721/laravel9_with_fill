@@ -33,4 +33,16 @@ class ControllerDoc
     /** @var ParameterParser[] 请求参数 */
     public array $requestParam;
 
+
+    /**
+     * @return ParameterParser[]
+     */
+    public function requestBody(){
+      $data =  array_filter($this->requestParam,function ($val){
+            return !$val->isQueryParam;
+        });
+
+      return  $data[0]??[];
+    }
+
 }

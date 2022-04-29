@@ -9,6 +9,7 @@ use App\Helpers\Common;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Majie\Fills\Test\TestClass\Order;
 use Majie\Fills\Test\TestClass\OrderProduct;
 
 abstract class TestCase extends BaseTestCase
@@ -119,4 +120,6 @@ abstract class TestCase extends BaseTestCase
         $hander = new GenerateDocument();
         $hander->handle();
     }
+
+
 }

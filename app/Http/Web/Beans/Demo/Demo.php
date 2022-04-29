@@ -26,6 +26,7 @@ class Demo extends Proxy
     public int $status;
 
     #[ArrayShape([Product::class])]
+    #[Doc("商品信息")]
     public array $product;
 
 

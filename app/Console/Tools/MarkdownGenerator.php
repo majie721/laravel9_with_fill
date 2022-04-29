@@ -66,7 +66,13 @@ class MarkdownGenerator
                 });
                 $lines[] = "#### {$apiIndex}.4 TypeScript 请求结构";
                 $lines[] = "```json";
-                $lines[] = empty($bodyParam)?'{}':$this->getTsTypeDefine($bodyParam);
+                $lines[] = empty($bodyParam)?'{}':$this->getTsTypeDefine($bodyParam[0]);
+                $lines[] = "```";
+
+
+                $lines[] = "#### {$apiIndex}.5 TypeScript 响应结构";
+                $lines[] = "```json";
+                $lines[] = empty($doc->response)?'{}':$this->getTsTypeDefine($doc->response);
                 $lines[] = "```";
 
 
@@ -166,62 +172,66 @@ class MarkdownGenerator
      *
      *
      */
-    private function getTsTypeDefine(ParameterParser $param){
-        $interfaceList = [];
+    private function getTsTypeDefine(ParameterParser|ResponseParser $param){
+
+
         if(!$param->className){
             return '';
         }
-        $namespace = $param->className;
-        $interfaceName = self::toTsInterfaceName($param->className);
+
+        $items[] = $this->getTsType($param);
+
         if($param->child){
-            $items = [];
             foreach ($param->child as $item){
-               $items[] =  $this->getTsType($item);
+                $childObjectInterface =$this->getTsTypeDefine($item);
+                $childObjectInterface && $items[] =  $childObjectInterface;
             }
-
-            $content = implode(PHP_EOL,$items);
-
         }
 
-
-
+        return  implode(PHP_EOL.PHP_EOL,$items);
     }
 
-    private function getTsType(ParameterParser $param){ //todo ts undefind 和 null
-        if($param->className){
-            if($param->type === 'object'){
-                $this->getTsTypeDefine($param);
+    private function getTsType(ParameterParser|ResponseParser $param):string{ //todo ts undefind 和 null
 
-                $doc = "/** {$param->document}  */" ;
-                $name = Str::uncamelize($param->name);
-                $type = self::toTsInterfaceName($param->className);
+        $namespace = $param->className;
+        $interfaceName = self::toTsInterfaceName($param->className);
+        $content[] ="{$namespace} :";
+        $content[]= "interface {$interfaceName} {";
+        $tab = "  ";
+        foreach ($param->child as $prop){
+            if($prop->className){
+                if($prop->type === 'object'){
+                    $this->getTsTypeDefine($param);
 
-                $content =  $doc.PHP_EOL;
-                $content .= " {$name}: {$type}";
-                return $content;
+                    $doc = "{$tab}/** {$prop->document}  */" ;
+                    $name = Str::uncamelize($prop->name);
+                    $type = self::toTsInterfaceName($prop->className);
+
+                    $content[] =  $doc;
+                    $content[]= "{$tab}{$name}: {$type};";
+                }
+
+                if($prop->type ==='object[]'){
+                    $this->getTsTypeDefine($prop);
+                    $doc = "{$tab}/** {$prop->document}  */" ;
+                    $name = Str::uncamelize($prop->name);
+                    $type = self::toTsInterfaceName($prop->className).'[]';
+                    $content[] =  $doc;
+                    $content[] = "{$tab}{$name}: {$type};";
+                }
             }
 
-            if($param->type ==='object[]'){
-                $this->getTsTypeDefine($param);
-                $doc = "/** {$param->document}  */" ;
-                $name = Str::uncamelize($param->name);
-                $type = self::toTsInterfaceName($param->className).'[]';
-                $content =  $doc.PHP_EOL;
-                $content .= " {$name}: {$type}";
-                return $content;
+            if($prop->isBuiltin){
+                $enumStr = $prop->isEnum ? "。枚举【".$prop->getEnumDesc()."】":'';
+                $doc = "{$tab}/** {$prop->document}{$enumStr} */";
+                $name = Str::uncamelize($prop->name);
+                $type = self::transformTsType($prop->type);
+                $content[] =  $doc;
+                $content[]= "{$tab}{$name}: {$type};";
             }
         }
-
-        if($param->isBuiltin){
-            $enumStr = $param->isEnum ? "。枚举【".$param->getEnumDesc()."】":'';
-            $doc = $param->document.$enumStr;
-            $name = Str::uncamelize($param->name);
-            $type = self::transformTsType($param->type);
-            $content =  $doc.PHP_EOL;
-            $content .= " {$name}: {$type}";
-            return $content;
-        }
-
+        $content[] = '}';
+        return implode(PHP_EOL,$content);
     }
 
     /**
@@ -249,6 +259,5 @@ class MarkdownGenerator
         $arr=  explode("\\",$phpClassName);
        return  array_pop($arr);
     }
-
 
 }

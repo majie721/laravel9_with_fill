@@ -315,9 +315,9 @@ class ParameterParser
         $info = json_decode($this->enumData,true);
         $arr = [];
         foreach ($info['labelData'] as $datum){
-            $arr .=$datum['label'].":".$datum['value'];
+            $arr[] =$datum['label'].":".$datum['value'];
         }
-       return json_encode($arr,',');
+       return implode(',',$arr);
     }
 
 

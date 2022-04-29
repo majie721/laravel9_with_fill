@@ -17,7 +17,7 @@ class ResponseParser
     /** @var string 参数名称(前端蛇形,php小驼峰) */
     public string $name;
 
-    /** @var string 类型（scalar,array,object,object[],null.响应仅支持，object 和 null） */
+    /** @var string 类型（scalar,array,object,object[],null;depth=0时响应仅支持，object 和 null） */
     public string $type;
 
     /** @var bool 是否标量类型: int,string,bool,float,int[],string[],bool[],float[] */
@@ -44,6 +44,9 @@ class ResponseParser
     /** @var bool  */
     public bool $hasDefaultValue = false;
 
+    /** @var string 对象类名 */
+    public string $className = '';
+
     public function __construct()
     {
     }
@@ -58,17 +61,6 @@ class ResponseParser
      */
     public function parse(string|null $responseAttribute)
     {
-        $this->name = '';
-        $this->depth = 0;
-        $this->type = '';
-        $this->document = '';
-        $this->isBuiltin = false;
-        $this->isEnum = false;
-        $this->enumData = '';
-        $this->child = [];
-        $this->isRequired = true;
-        $this->hasDefaultValue = false;
-
 
         if(null === $responseAttribute){
            return null;
@@ -80,6 +72,17 @@ class ResponseParser
 
 
         $this->child = $this->parserClassType($responseAttribute, 1);
+
+        $this->name = '';
+        $this->depth = 0;
+        $this->type = '';
+        $this->document = '';
+        $this->isBuiltin = false;
+        $this->isEnum = false;
+        $this->enumData = '';
+        $this->isRequired = true;
+        $this->hasDefaultValue = false;
+        $this->className = $responseAttribute;
 
         return $this;
     }
@@ -125,7 +128,7 @@ class ResponseParser
                         $properties[] =  $this->newScalarArray($datum,$depth);
                         continue;
                     }else{ //对象数组
-                        $instance = $this->newObjectArray($datum,$depth);
+                        $instance = $this->newObjectArray($datum,$depth)->setClassName($datum->arrayType);
                         $instance->child =  $this->parserClassType($datum->arrayType,$depth+1);
                         $properties[] = $instance;
                         continue;
@@ -133,7 +136,7 @@ class ResponseParser
                 }
 
                 if(class_exists($datum->typeName)){ //对象
-                    $instance = $this->newObject($datum,$depth);
+                    $instance = $this->newObject($datum,$depth)->setClassName($datum->typeName);
                     $instance->child =  $this->parserClassType($datum->typeName,$depth+1);
                     $properties[] =   $instance;
                     continue;
@@ -220,8 +223,32 @@ class ResponseParser
         $instance->enumData = $instance->isEnum? json_encode($info->enumInfo, JSON_THROW_ON_ERROR) :'';
         $instance->child = [];
         $instance->depth = $depth;
+        $instance->isBuiltin = in_array($type, ['scalar', 'array'], true);
         $instance->isRequired = $info->allowsNull===false;
         return $instance;
+    }
+
+    /**
+     * @param string $className
+     * @return $this
+     */
+    private function setClassName(string $className):self{
+        $this->className = $className;
+        return $this;
+    }
+
+
+    public function getEnumDesc():string{
+        if(!$this->isEnum){
+            return '';
+        }
+
+        $info = json_decode($this->enumData,true);
+        $arr = [];
+        foreach ($info['labelData'] as $datum){
+            $arr[] =$datum['label'].":".$datum['value'];
+        }
+        return implode(',',$arr);
     }
 
 }

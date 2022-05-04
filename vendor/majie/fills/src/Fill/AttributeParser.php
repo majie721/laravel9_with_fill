@@ -69,21 +69,9 @@ class AttributeParser
     public function getDoc(){
         $data =  $this->attributesData[Doc::class]??'';
         if($data){
-            return  $data['attribute'][0]->newInstance()->getDoc();
+            $arguments = $data['attribute'][0]->getArguments();
+            return $arguments[0]; //todo 待优化
         }
-        return '';
-    }
-
-    /**
-     * 解析文档注释注解(是否可选)
-     * @return mixed|string|void
-     */
-    public function getDocOption(){
-        $data =  $this->attributesData[Doc::class]??'';
-        if($data){
-            return  $data['attribute'][0]->newInstance()->getOption();
-        }
-        return '';
     }
 
     /**
@@ -114,8 +102,14 @@ class AttributeParser
             return [];
         }
 
-        return $data['attribute'][0]->newInstance()->getEnumInfo();
-
+        $instance = $data['attribute'][0]->getArguments();
+        if(is_callable([$instance[0],'labelData'])){
+            $labelData = call_user_func([$instance[0],'labelData']);
+        }
+        return [
+            'name'=>$instance[0],
+            'labelData'=>$labelData??[]
+        ];
     }
 
 

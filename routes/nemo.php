@@ -1,24 +1,22 @@
 <?php
 
-use App\Helpers\App;
-use App\Helpers\Router;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| API Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register web routes for your application. These
+| Here is where you can register API routes for your application. These
 | routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
+| is assigned the "api" middleware group. Enjoy building your API!
 |
 */
 
 Route::middleware([])->group(function (){
-    $config =  config('route.web',[]);
-    App::setRouteSymbol($config['name']);
+    $config =  config('nemo.route.nemo',[]);
     Route::any('{controller}/{action}', static function ($controller, $action)use ($config){
-        return Router::dispatchRoute($controller,$action,$config);
-    })->where('controller','nemo.*');
+        return \App\Helpers\Router::dispatchRoute($controller,$action,$config);
+    })->where('controller','.*');
 });

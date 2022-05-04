@@ -10,7 +10,8 @@
         "laravel/framework": "^9.2",
         "laravel/sanctum": "^2.14.1",
         "laravel/tinker": "^2.7",
-        "majie/fills": "dev-main"
+        "majie/fills": "dev-main",
+        "majie/laravel-nemo": "dev-main"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.12",

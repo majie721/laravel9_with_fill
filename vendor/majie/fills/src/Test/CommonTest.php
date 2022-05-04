@@ -2,7 +2,6 @@
 
 namespace Majie\Fills\Test;
 
-use App\Http\Web\Beans\Demo\Demo;
 use Majie\Fills\Test\TestClass\BaseTest;
 use Majie\Fills\Test\TestClass\Order;
 use PHPUnit\Framework\TestCase;
@@ -33,11 +32,5 @@ Class CommonTest extends BaseTest {
 
     public function testCallable(){
         is_callable();
-    }
-
-    public function testNullCall(){
-        var_dump(Demo::class);
-        $docData = null;
-        var_dump($docData->getDoc());
     }
 }

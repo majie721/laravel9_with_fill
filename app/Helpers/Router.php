@@ -7,6 +7,7 @@ use App\Exceptions\HttpNotFoundException;
 use App\Exceptions\ParamsException;
 use App\Helpers\Attributes\ArrayShapeConst;
 use JetBrains\PhpStorm\ArrayShape;
+use LaravelNemo\Nemo;
 use Majie\Fills\Fill\Proxy;
 
 class Router
@@ -27,7 +28,7 @@ class Router
         }
 
         $controller = implode("\\", $controllerArr);
-        $controller = "{$config['namespace']}\\{$controller}Controller"; //eg. "App\Http\Web\Controllers\IndexController"
+        $controller = "{$config['namespace']}\\{$controller}Controller"; //eg. "App\Http\Web\Controllers\ToolsController"
 
         $action = lcfirst(Str::camelize($action));//action为小驼峰
         if (in_array($action, config('controller.forbidden_actions'), true)) {
@@ -89,7 +90,7 @@ class Router
     private static function matchTypeIsClass(\ReflectionParameter $parameter,string $className)
     {
         $resolvedClass = app($className);
-        if ($resolvedClass instanceof Proxy) {
+        if ($resolvedClass instanceof Nemo) {
             $resolvedClass =  $resolvedClass::fromItem(\request()->all());
         }
 

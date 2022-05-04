@@ -110,9 +110,9 @@ class PropertyParser
                     $propertyInfo->arrayType = $attributeParser->getArrayType();
                     $propertyInfo->isBuiltin = $reflectionType->isBuiltin() && in_array($propertyInfo->arrayType,['','int','string','float','bool','int[]','string[]','float[]','bool[]'],true);
                     $parseDoc && $propertyInfo->doc = $attributeParser->getDoc();
-                    $parseDoc && $propertyInfo->option = $attributeParser->getDocOption();
                     $enumDoc  && $propertyInfo->enumInfo = $attributeParser->enumInfo();
                     $propertyInfo->decorators = $attributeParser->getDecorators();
+
                     self::$proxyPropertyPoll[$className][$propertyName] = $propertyInfo;
                 }
             }
@@ -128,8 +128,8 @@ class PropertyParser
      * @throws DocumentPropertyError|\ReflectionException
      */
     #[ArrayShape(['Key'=>PropertyInfo::class])]
-    public function getProxyPropertyData(string $className,bool $parseDoc=false,bool $enumDoc=true):array{
-        $this->parseProxyPropertyData($className,$parseDoc,$enumDoc);
+    public function getProxyPropertyData(string $className):array{
+        $this->parseProxyPropertyData($className);
         return self::$proxyPropertyPoll[$className]??[];
     }
 
@@ -158,10 +158,10 @@ class PropertyParser
             throw new DocumentPropertyError($message,ExceptionConstCode::PROPERTY_TYPE_IS_UNION_TYPE);
         }
 
-        if($property instanceof \ReflectionIntersectionType){ //php8.1
-            $message = sprintf("The %s property type of the %s object cannot be intersection type.",$propertyName,$this->proxyObjName);
-            throw new DocumentPropertyError($message,ExceptionConstCode::PROPERTY_TYPE_IS_INTERSECTION_TYPE);
-        }
+//        if($property instanceof \ReflectionIntersectionType){ //php8.1
+//            $message = sprintf("The %s property type of the %s object cannot be intersection type.",$propertyName,$this->proxyObjName);
+//            throw new DocumentPropertyError($message,ExceptionConstCode::PROPERTY_TYPE_IS_INTERSECTION_TYPE);
+//        }
 
         $message = sprintf("The %s property type of the object[ %s ] cannot be unknown type.",$propertyName,$this->proxyObjName);
         throw new DocumentPropertyError($message,ExceptionConstCode::PROPERTY_TYPE_IS_UNKNOWN_TYPE);

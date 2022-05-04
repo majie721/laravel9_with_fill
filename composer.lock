@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c4c79ffbe2e7724e92634a5a98c8e4e4",
+    "content-hash": "c0d7ac029ffb97c15f3bf9248b1f0c3c",
     "packages": [
         {
             "name": "brick/math",
@@ -436,6 +436,56 @@
                 }
             ],
             "time": "2021-10-11T09:18:27+00:00"
+        },
+        {
+            "name": "erusev/parsedown",
+            "version": "1.7.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/erusev/parsedown.git",
+                "reference": "cb17b6477dfff935958ba01325f2e8a2bfa6dab3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/erusev/parsedown/zipball/cb17b6477dfff935958ba01325f2e8a2bfa6dab3",
+                "reference": "cb17b6477dfff935958ba01325f2e8a2bfa6dab3",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.35"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Parsedown": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Emanuil Rusev",
+                    "email": "hello@erusev.com",
+                    "homepage": "http://erusev.com"
+                }
+            ],
+            "description": "Parser for Markdown.",
+            "homepage": "http://parsedown.org",
+            "keywords": [
+                "markdown",
+                "parser"
+            ],
+            "support": {
+                "issues": "https://github.com/erusev/parsedown/issues",
+                "source": "https://github.com/erusev/parsedown/tree/1.7.x"
+            },
+            "time": "2019-12-30T22:54:17+00:00"
         },
         {
             "name": "fruitcake/php-cors",
@@ -1638,6 +1688,57 @@
                 "source": "https://github.com/majie721/ArrayFill/tree/main"
             },
             "time": "2022-04-25T13:00:14+00:00"
+        },
+        {
+            "name": "majie/laravel-nemo",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/majie721/LaravelNemo.git",
+                "reference": "6c8788b192f202038453134e7f2db9e73b567a34"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/majie721/LaravelNemo/zipball/6c8788b192f202038453134e7f2db9e73b567a34",
+                "reference": "6c8788b192f202038453134e7f2db9e73b567a34",
+                "shasum": ""
+            },
+            "require": {
+                "erusev/parsedown": "^1.7",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5.10"
+            },
+            "default-branch": true,
+            "type": "libarary",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "LaravelNemo\\NemoServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LaravelNemo\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "mit"
+            ],
+            "authors": [
+                {
+                    "name": "Mj",
+                    "email": "1440413448@qq.com"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/majie721/LaravelNemo/issues",
+                "source": "https://github.com/majie721/LaravelNemo/tree/main"
+            },
+            "time": "2022-04-30T01:46:12+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -8389,7 +8490,8 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "majie/fills": 20
+        "majie/fills": 20,
+        "majie/laravel-nemo": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

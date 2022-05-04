@@ -9,6 +9,7 @@ use App\Helpers\Common;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use LaravelNemo\ServiceProvider;
 use Majie\Fills\Test\TestClass\OrderProduct;
 
 abstract class TestCase extends BaseTestCase
@@ -118,5 +119,11 @@ abstract class TestCase extends BaseTestCase
     public function testparser(){
         $hander = new GenerateDocument();
         $hander->handle();
+    }
+
+
+    public function testNemoPublishConfig(){
+        (new ServiceProvider(app()))->boot();
+        var_dump(config('nemo'));
     }
 }

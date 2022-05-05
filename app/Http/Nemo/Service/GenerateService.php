@@ -6,12 +6,13 @@ use App\Http\Nemo\Controllers\Beans\ClassBean;
 use App\Http\Nemo\Controllers\Beans\JsonModelReq;
 use App\Http\Nemo\Controllers\Beans\JsonNode;
 use App\Http\Nemo\Controllers\Beans\PropertyInfo;
+use LaravelNemo\Doc\BeanGenerator;
 
 class GenerateService
 {
 
     /**
-     * @param  $nodes JsonNode[]
+     * @param  $nodes ClassBean[]
      * @return array
      */
     public function genJsonModel(array $nodes,string $namespace,string $className){
@@ -19,7 +20,7 @@ class GenerateService
 
         foreach ($nodes as $node){
             if($node->children){
-                $classList[] = $this->genJsonModel($node->children,$namespace,ucfirst($node->name));
+                $classList = [...$classList,...$this->genJsonModel($node->children,$namespace,ucfirst($node->name))];
             }
         }
 

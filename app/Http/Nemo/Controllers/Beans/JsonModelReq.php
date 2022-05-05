@@ -12,8 +12,9 @@ class JsonModelReq extends Nemo
     public array $list;
 
     #[Doc('命名空间',true)]
-    public ?string $namespace = "'App\\Beans'";
+    public ?string $namespace = "App\\Beans";
 
+    /** @var string|null  */
     #[Doc('类名',true)]
     public ?string $className = 'Bean';
 

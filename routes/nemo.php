@@ -17,6 +17,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware([])->group(function (){
     $config =  config('nemo.route.nemo',[]);
     Route::any('{controller}/{action}', static function ($controller, $action)use ($config){
-        return \App\Helpers\Router::dispatchRoute($controller,$action,$config);
+        return \LaravelNemo\Library\Router::dispatchRoute($controller,$action,$config);
     })->where('controller','.*');
 });

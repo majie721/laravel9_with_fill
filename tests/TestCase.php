@@ -10,6 +10,8 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use LaravelNemo\ServiceProvider;
+use LaravelNemo\ServiceProvider;
+use Majie\Fills\Test\TestClass\Order;
 use Majie\Fills\Test\TestClass\OrderProduct;
 
 abstract class TestCase extends BaseTestCase
@@ -126,4 +128,9 @@ abstract class TestCase extends BaseTestCase
         (new ServiceProvider(app()))->boot();
         var_dump(config('nemo'));
     }
+    public function testA(){
+        (new ServiceProvider(app()))->boot();
+    }
+
+
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Nemo\Controllers\Beans;
 
+use LaravelNemo\Library\Utils;
 use LaravelNemo\Nemo;
 
 class PropertyInfo extends Nemo
@@ -23,7 +24,7 @@ class PropertyInfo extends Nemo
 
 
     public static function jsonGen(JsonNode $node,string $namespace){
-        $instance = PropertyInfo::fromItem([]);
+        $instance = self::fromItem([]);
         $instance->name = $node->name;
         $instance->type = $node->type;
         $instance->arrayType = $node->array_type?:'';
@@ -36,7 +37,7 @@ class PropertyInfo extends Nemo
 
     private static function getJsonType(JsonNode $node,string $namespace){
         $classType = '';
-        if($node->type==='object' || $node->array_type==='object'){
+        if($node->type==='object' ||  !preg_match('/^(\[\]|int|bool|float|string|array).*?/',(string)$node->array_type)){
             $classType = self::getClassName($node);
             $classType = "{$namespace}\\{$classType}";
         }
@@ -45,8 +46,6 @@ class PropertyInfo extends Nemo
     }
 
     private static function getClassName(JsonNode $node){
-        $path = substr($node->key,5);
-        $pathArr = explode(".",$path);
-        return implode(array_map('ucfirst',$pathArr));
+        return Utils::camelize($node->name);
     }
 }

@@ -10,7 +10,6 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use LaravelNemo\ServiceProvider;
-use LaravelNemo\ServiceProvider;
 use Majie\Fills\Test\TestClass\Order;
 use Majie\Fills\Test\TestClass\OrderProduct;
 
@@ -128,8 +127,24 @@ abstract class TestCase extends BaseTestCase
         (new ServiceProvider(app()))->boot();
         var_dump(config('nemo'));
     }
+
+    /**
+     * @param int[] $a
+     * @return void
+     */
     public function testA(){
-        (new ServiceProvider(app()))->boot();
+
+        var_dump(preg_match('/^(\[\]|int|bool|float|string|array).*?/','array'));
+        var_dump(preg_match('/^(\[\]|int|bool|float|string|array).*?/','[]'));
+        var_dump(preg_match('/^(\[\]|int|bool|float|string|array).*?/',''));
+        var_dump(preg_match('/^(\[\]|int|bool|float|string|array).*?/','int[][]'));
+        var_dump(preg_match('/^(\[\]|int|bool|float|string|array).*?/','string[][]'));
+        var_dump(preg_match('/^(\[\]|int|bool|float|string|array).*?/','bool[][]'));
+        var_dump(preg_match('/^(\[\]|int|bool|float|string|array).*?/','float[][]'));
+        var_dump(preg_match('/^(\[\]|int|bool|float|string|array).*?/','Int[][]'));
+        var_dump(preg_match('/^(\[\]|int|bool|float|string|array).*?/','String[][]'));
+        var_dump(preg_match('/^(\[\]|int|bool|float|string|array).*?/','Per[][]'));
+        var_dump(preg_match('/^(\[\]|int|bool|float|string|array).*?/','In[][]'));
     }
 
 

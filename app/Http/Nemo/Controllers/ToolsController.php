@@ -6,6 +6,7 @@ use App\Http\Nemo\Controllers\Beans\ClassBean;
 use App\Http\Nemo\Controllers\Beans\JsonModelReq;
 use App\Http\Nemo\Service\GenerateService;
 use LaravelNemo\Doc\BeanGenerator;
+use function Composer\Autoload\includeFile;
 
 class ToolsController
 {
@@ -23,6 +24,7 @@ class ToolsController
         $files = [];
         if($rootNode && count($rootNode->children)){
             $classList =   $this->service->genJsonModel($rootNode->children,$req->namespace,$req->className);
+            dd($classList);
             /** @var ClassBean $item */
             foreach ($classList as $item){
                 $path = storage_path($req->className.DIRECTORY_SEPARATOR.$item->className);

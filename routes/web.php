@@ -18,7 +18,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware([])->group(function (){
     $config =  config('nemo.route.web',[]);
     App::setRouteSymbol($config['name']);
+
     Route::any('{controller}/{action}', static function ($controller, $action)use ($config){
-        return Router::dispatchRoute($controller,$action,$config);
-    })->where('controller','nemo.*');
+
+        return \LaravelNemo\Library\Router::dispatchRoute($controller,$action,$config);
+    })->where('controller','.*');
 });

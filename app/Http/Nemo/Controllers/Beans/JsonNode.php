@@ -3,6 +3,7 @@
 namespace App\Http\Nemo\Controllers\Beans;
 
 use JetBrains\PhpStorm\ArrayShape;
+use LaravelNemo\AttributeClass\ArrayInfo;
 use LaravelNemo\Library\Utils;
 use LaravelNemo\Nemo;
 
@@ -21,14 +22,17 @@ class JsonNode extends Nemo
     public int $depth;
 
     /** @var JsonNode[]|null  */
-    #[ArrayShape([JsonNode::class])]
+    #[ArrayInfo(JsonNode::class)]
     public ?array $children;
 
     /** mock */
     public ?string $mock = null;
 
-    /** 数组类型 */
+    /** 数组类型(eg:[],int[],....) */
     public ?string $array_type = null;
+
+    /** @var JsonNode[]|null */
+    public ?array $array_object = null;
 
     /** @var bool  */
     public bool $is_array_item;
@@ -46,7 +50,9 @@ class JsonNode extends Nemo
            if(empty($this->children)){
                $this->array_type = 'array';
            }else{
-               $this->array_type = $this->getArrayType($this->children,Utils::camelize($this->name));
+               $info = $this->getArrayInfo($this->children,Utils::camelize($this->name));
+               $this->array_object= $info['array_object'];
+               $this->array_type= $info['array_type'];
            }
 
        }
@@ -55,18 +61,28 @@ class JsonNode extends Nemo
 
     /**
      * @param JsonNode[] $children
-     * @return string
+     * @return array ['array_type'=>'int[][]','array_object'=>[]]
      */
-    private function getArrayType(array $children,$name=''):string{
+    private function getArrayInfo(array $children,$name=''):array{
         if($children[0]->type!=='array'){
             if($children[0]->type ==='object'){
                 $children[0]->name = $name;
-                return "{$name}[]";
+                return  [
+                    'array_type'=>"{$name}[]",
+                    'array_object'=>$children[0]->children,
+                ];
             }
-            return "{$children[0]->type}[]";
+            return [
+                'array_type'=>"{$children[0]->type}[]",
+                'array_object'=>null,
+            ];
+
         }else{
-            $type =  $this->getArrayType($children[0]->children,$name);
-            return "{$type}[]";
+            $info =  $this->getArrayInfo($children[0]->children,$name);
+            return [
+                'array_type'=>"{$info['array_type']}[]",
+                'array_object'=>$info['array_object'],
+            ];
         }
 
     }

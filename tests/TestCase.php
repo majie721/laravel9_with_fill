@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\Beans\Bean;
 use App\Console\Commands\GenerateDocument;
 use App\Enums\Common\RouteSymbol;
 use App\Helpers\App;
@@ -9,6 +10,7 @@ use App\Helpers\Common;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use LaravelNemo\AttributeClass\ArrayInfo;
 use LaravelNemo\ServiceProvider;
 use Majie\Fills\Test\TestClass\Order;
 use Majie\Fills\Test\TestClass\OrderProduct;
@@ -145,6 +147,24 @@ abstract class TestCase extends BaseTestCase
         var_dump(preg_match('/^(\[\]|int|bool|float|string|array).*?/','String[][]'));
         var_dump(preg_match('/^(\[\]|int|bool|float|string|array).*?/','Per[][]'));
         var_dump(preg_match('/^(\[\]|int|bool|float|string|array).*?/','In[][]'));
+    }
+
+
+    public function testArrayType(){
+        preg_match('/^(\[\]|int|bool|float|string|array).*?/','Per[][]',$maths);
+        var_dump($maths[1]);
+
+    }
+
+
+    public function testRef(){
+        $ref =new \ReflectionClass(Bean::class);
+        $data =  $ref->getProperty('array_object')->getAttributes(ArrayInfo::class);
+        var_dump($data[0]->getArguments());
+        var_dump($ref->getProperty('array_object')->getType()->isBuiltin());
+
+        var_dump(substr_count('int[][]','[]',));
+
     }
 
 

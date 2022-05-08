@@ -16,16 +16,29 @@ class GenerateService
      * @param  $nodes JsonNode[]
      * @return array
      */
-    public function genJsonModel(array $nodes,string $namespace,string $className){
+    public function genJsonModel(array $nodes,string $namespace,string $className ){
         $classList[] = $this->parseJsonChildren($nodes,$namespace,$className);
 
         foreach ($nodes as $node){
             if($node->children){
-                $classList = [...$classList,...$this->genJsonModel($node->children,$namespace,Utils::camelize($node->name))];
+                //数组的非对象Item子节点不应该被解析
+                $children = $node->children;
+                if($node->type==='array'){
+                    if($node->array_object){
+                        $children = $node->array_object;
+                    }else{
+                        continue;
+                    }
+                }
+
+                $classList = [...$classList,...$this->genJsonModel($children,$namespace,Utils::camelize($node->name))];
+
             }
         }
-
-        return $classList;
+        $classList = array_filter($classList,function($val){
+           return !empty($val);
+        });
+        return $classList??[];
     }
 
     /**

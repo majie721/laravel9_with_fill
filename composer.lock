@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c0d7ac029ffb97c15f3bf9248b1f0c3c",
+    "content-hash": "c6e1250e43c05b30a0d27e06b76f9a41",
     "packages": [
         {
             "name": "brick/math",
@@ -1695,12 +1695,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/majie721/LaravelNemo.git",
-                "reference": "6c8788b192f202038453134e7f2db9e73b567a34"
+                "reference": "f87f483179e4754fd98216c123dd5833ff32c226"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/majie721/LaravelNemo/zipball/6c8788b192f202038453134e7f2db9e73b567a34",
-                "reference": "6c8788b192f202038453134e7f2db9e73b567a34",
+                "url": "https://api.github.com/repos/majie721/LaravelNemo/zipball/f87f483179e4754fd98216c123dd5833ff32c226",
+                "reference": "f87f483179e4754fd98216c123dd5833ff32c226",
                 "shasum": ""
             },
             "require": {
@@ -1738,7 +1738,7 @@
                 "issues": "https://github.com/majie721/LaravelNemo/issues",
                 "source": "https://github.com/majie721/LaravelNemo/tree/main"
             },
-            "time": "2022-04-30T01:46:12+00:00"
+            "time": "2022-05-08T23:56:49+00:00"
         },
         {
             "name": "monolog/monolog",
